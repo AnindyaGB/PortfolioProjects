@@ -1,0 +1,112 @@
+<!doctype html>
+
+<html lang="en">
+
+    <head>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+            integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+            crossorigin=""/>
+       <!--<link rel="stylesheet" href="http://leaflet.github.io/Leaflet.label/leaflet.label.css" />-->
+        <link rel="stylesheet" href="libs/css/index.css" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css">
+
+        <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+        
+      </head>
+    
+    <body>
+        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+          <div class="container-fluid">
+            <div class="nav navbar-nav">
+            
+              <select id="locality-dropdown" name="locality">
+                <option value="">--Please choose an option--</option>
+            </select>
+            </div>
+          </div>
+        </div>
+        <div id="container">
+          <div id="mapid"></div>
+          <div class="row overlay">
+            <div class="span2">
+                <table id="table">
+                    <tr>
+                        <td>country: </td>
+                        <td id="countryName"></td>
+                    </tr>
+                    <tr>
+                        <td>main weather: </td>
+                        <td id="txtmain"></td>
+                    </tr>
+                    <tr>
+                        <td>description weather: </td>
+                        <td id="txtdescription"></td>
+                    </tr>
+                    <tr>
+                        <td>Capital: </td>
+                        <td id="txtcapital"></td>
+                    </tr>
+                    <tr>
+                        <td>Population: </td>
+                        <td id="txtpopulation"></td>
+                    </tr>
+                    <tr>
+                        <td>Currency: </td>
+                        <td id="txtcurrency"></td>
+                    </tr>
+                    <tr>
+                        <td>Flag: </td>
+                        <td><img id="flag" src='' style="width:100px;height:100px;"></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="span3">
+              <table id="table2">
+                  <tr>
+                      <td>Time Zone: </td>
+                      <td id="timeZone"></td>
+                  </tr>
+                  <tr>
+                      <td>Language: </td>
+                      <td id="Language"></td>
+                  </tr>
+                  <tr>
+                      <td>Confirmed Covid: </td>
+                      <td id="covidConfirmed"></td>
+                  </tr>
+                  <tr>
+                      <td>other stuff: </td>
+                      <td id=""></td>
+                  </tr>
+                  <tr>
+                      <td>other stuff: </td>
+                      <td id=""></td>
+                  </tr>
+                  <tr>
+                      <td>other stuff: </td>
+                      <td id=""></td>
+                  </tr>
+                  <tr>
+                      <td>other stuff: </td>
+                      <td id=""></td>
+                  </tr>
+                  <tr>
+                      <td>other stuff: </td>
+                      <td id=""></td>
+                  </tr>
+              </table>
+          </div>
+        </div>
+        </div>
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+		integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+    crossorigin=""></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script>
+
+    <!--<script src="http://leaflet.github.io/Leaflet.label/leaflet.label.js"></script>-->
+    <script src="libs/js/countryBorders.js"></script>
+    <script src="libs/js/script.js"></script>
+</body>
+
+</html>

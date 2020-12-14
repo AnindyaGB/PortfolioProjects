@@ -1,0 +1,70 @@
+html, body, #container {
+    height: 100%;
+    overflow: hidden;
+    width: 100%;
+    font-size: 16px;
+  }
+  body {
+    /* height of .navbar, customize with @navbar-height variable */
+    padding-top: 50px;
+  }
+  .navbar {
+    min-height: 50px;
+  }
+ 
+  #mapid {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    height: 100%;
+    width: auto;
+  }
+  .sidebar-wrapper {
+    height: 100%;
+    position: relative;
+    width: 100%;
+  }
+
+   #table {
+    position: absolute;
+    top: 30%;
+    left: 0;
+    z-index: 314159;
+    pointer-events: none;
+    background-color:rgb(255, 204, 204);
+  opacity: 0.9;
+  border: 1px solid black;
+  border-radius: 8px;
+  
+}
+
+#table2 {
+  position: absolute;
+  top: 30%;
+  left: 0;
+  z-index: 314159;
+  pointer-events: none;
+  background-color:rgb(34, 91, 167);
+opacity: 0.9;
+border: 1px solid black;
+border-radius: 8px;
+
+
+}
+
+@media (min-width: 375px) {  
+  table {font-size:2rem;} /*1rem = 16px*/
+}
+@media (min-width: 768px) {  
+  table {font-size:1.5rem;} /*1rem = 16px*/
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) { 
+  table {font-size:1rem;} /*1rem = 16px*/
+}
+
+.star{
+  font-size: 1.5em;
+  
+
+} 
+
