@@ -1,112 +1,255 @@
-<!doctype html>
+<!DOCTYPE html>
 
-<html lang="en">
+<html>
 
-    <head>
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
-            integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
-            crossorigin=""/>
-       <!--<link rel="stylesheet" href="http://leaflet.github.io/Leaflet.label/leaflet.label.css" />-->
-        <link rel="stylesheet" href="libs/css/index.css" />
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css">
+<head>
 
-        <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
-        
-      </head>
+  <title>Maps with Anindya</title>
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+  <link rel="stylesheet" href="libs/css/index.css" />
+  <link href="https://unpkg.com/leaflet-easybutton@2.0.0/src/easy-button.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+  
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-easybutton@2.0.0/src/easy-button.js"> </script>
+  <script type="text/javascript" src="Leaflet.Icon.Glyph.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+               
+</head>
+
+<body>
+
+<nav class="navbar navbar-dark bg-primary navbar-fixed-top" role="navigation">
+      <form>
+        <div class="form-group navbar-form">
+          <select class="form-control" id="locality-dropdown" name="locality">
+            <option value="">--Please choose an option--</option>
+          </select>
+        </div>
+      
+      </form>
+</nav>
+  
+<div id='map'></div>
+    <!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
     
-    <body>
-        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-          <div class="container-fluid">
-            <div class="nav navbar-nav">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Country information</h4>
+        </div>
+        <div class="modal-body">
+          <table class="table" id="table">
+            <tbody>
+            <tr>
+                <td>country: </td>
+                <td id="countryName"></td>
+            </tr>
+            <tr>
+              <td>Naitive name: </td>
+              <td id="naitiveName"></td>
+          </tr>
+            <tr>
+              <td>Continent: </td>
+              <td id="continent"></td>
+          </tr>
+          <tr>
+            <td>Capital: </td>
+            <td id="txtcapital"></td>
+        </tr>
+        <tr>
+          <td>Language: </td>
+          <td id="Language"></td>
+      </tr>
+      <tr>
+        <td>Population: </td>
+        <td id="txtpopulation"></td>
+    </tr>
+    <tr>
+      <td>Bordering countries: </td>
+      <td id="timeZone"></td>
+  </tr> 
             
-              <select id="locality-dropdown" name="locality">
-                <option value="">--Please choose an option--</option>
-            </select>
-            </div>
-          </div>
+            
+            
+            <tr>
+                <td>Flag: </td>
+                <td><img id="flag" src='' style="width:100px;height:100px;"></td>
+            </tr>
+        </tbody>
+        </table>
         </div>
-        <div id="container">
-          <div id="mapid"></div>
-          <div class="row overlay">
-            <div class="span2">
-                <table id="table">
-                    <tr>
-                        <td>country: </td>
-                        <td id="countryName"></td>
-                    </tr>
-                    <tr>
-                        <td>main weather: </td>
-                        <td id="txtmain"></td>
-                    </tr>
-                    <tr>
-                        <td>description weather: </td>
-                        <td id="txtdescription"></td>
-                    </tr>
-                    <tr>
-                        <td>Capital: </td>
-                        <td id="txtcapital"></td>
-                    </tr>
-                    <tr>
-                        <td>Population: </td>
-                        <td id="txtpopulation"></td>
-                    </tr>
-                    <tr>
-                        <td>Currency: </td>
-                        <td id="txtcurrency"></td>
-                    </tr>
-                    <tr>
-                        <td>Flag: </td>
-                        <td><img id="flag" src='' style="width:100px;height:100px;"></td>
-                    </tr>
-                </table>
-            </div>
-            <div class="span3">
-              <table id="table2">
-                  <tr>
-                      <td>Time Zone: </td>
-                      <td id="timeZone"></td>
-                  </tr>
-                  <tr>
-                      <td>Language: </td>
-                      <td id="Language"></td>
-                  </tr>
-                  <tr>
-                      <td>Confirmed Covid: </td>
-                      <td id="covidConfirmed"></td>
-                  </tr>
-                  <tr>
-                      <td>other stuff: </td>
-                      <td id=""></td>
-                  </tr>
-                  <tr>
-                      <td>other stuff: </td>
-                      <td id=""></td>
-                  </tr>
-                  <tr>
-                      <td>other stuff: </td>
-                      <td id=""></td>
-                  </tr>
-                  <tr>
-                      <td>other stuff: </td>
-                      <td id=""></td>
-                  </tr>
-                  <tr>
-                      <td>other stuff: </td>
-                      <td id=""></td>
-                  </tr>
-              </table>
-          </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
-        </div>
-        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
-		integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
-    crossorigin=""></script>
-    <script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script>
+      </div>
+           
+    </div>
+  </div>
 
-    <!--<script src="http://leaflet.github.io/Leaflet.label/leaflet.label.js"></script>-->
-    <script src="libs/js/countryBorders.js"></script>
-    <script src="libs/js/script.js"></script>
+  <div class="modal fade" id="myModal2" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Current Weather</h4>
+        </div>
+        <div class="modal-body">
+          <table class="table" id="table">
+            <tbody>
+            <tr>
+                <td>Weather: </td>
+                <td id="txtdescription"></td>
+            </tr>
+              <tr>
+                <td>Temperature C (Real): </td>
+                <td id="txttemperature"></td>
+            </tr>
+            <tr>
+              <td>Temperature C (Feels Like): </td>
+              <td id="txtFeelsLike"></td>
+          </tr>
+          <tr>
+            <td>Humidity (%): </td>
+            <td id="txtHumidity"></td>
+        </tr>
+        <tr>
+          <td>Wind (MPH): </td>
+          <td id="txtWind"></td>
+      </tr>
+          
+        </tbody>
+        </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+           
+    </div>
+  </div>
+
+  <div class="modal fade" id="myModal3" role="dialog">
+    <div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal">&times;</button>
+      <h4 class="modal-title">Currency Information</h4>
+    </div>
+    <div class="modal-body">
+      <table class="table" id="table2">
+        <tbody>
+        <tr>
+            <td>Currency: </td>
+            <td id="txtcurrency"></td>
+        </tr>
+          <tr>
+              <td>Currency Symbol: </td>
+              <td id="currencySymbol"></td>
+          </tr>
+          <tr>
+            <td>Currency Code: </td>
+            <td id="txtcurrencyCode"></td>
+        </tr>
+          <tr>
+            <td>Exchange rate(USD): </td>
+            <td id="exchangeRateUSD"></td>
+        </tr>
+        <tr>
+          <td>Exchange rate(EUR): </td>
+          <td id="exchangeRateEUR"></td>
+      </tr>
+      <tr>
+        <td>Exchange rate(GPB): </td>
+        <td id="exchangeRateGPB"></td>
+    </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="modal fade" id="myModal4" role="dialog">
+  <div class="modal-dialog">
+<div class="modal-content">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">&times;</button>
+    <h4 class="modal-title">Covid Information</h4>
+  </div>
+  <div class="modal-body" id="graph-container">
+    <table class="table" id="table2">
+      <tbody>
+        <tr>
+            <td>Confirmed Covid: </td>
+            <td id="covidConfirmed"></td>
+        </tr>
+        <tr>
+            <td>covid deaths: </td>
+            <td id="covidDeaths"></td>
+        </tr>
+        <tr>
+            <td>covid Recovered: </td>
+            <td id="covidRecovered"></td>
+        </tr>
+        <tr>
+          <td><canvas id="lineChart"></canvas> </td>
+          
+      </tr>
+
+      </tbody>
+    </table>
+    
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+  </div>
+</div>
+</div>
+</div>
+
+<div class="modal fade" id="myModal5" role="dialog">
+  <div class="modal-dialog">
+<div class="modal-content">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">&times;</button>
+    <h4 class="modal-title">About</h4>
+  </div>
+  <div class="modal-body" id="graph-container">
+    <p>
+      Welcome to the map application. This website will give you information on diffirent countries around the world.
+      select a country from the dropdown list or click the country on the map.
+      Different information can be seen on the other buttons on the left hand side.
+    </p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+  </div>
+</div>
+</div>
+</div>
+
+<i class="fas fa-home"></i>
+  <script src="libs/js/countryBorders.js"></script>
+  <script src="libs/js/script.js"></script>
 </body>
 
 </html>
