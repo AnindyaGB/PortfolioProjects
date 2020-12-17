@@ -10,12 +10,22 @@ for(var i = 0; i < countryBorders['features'].length; i++) {
  }
  options.sort();
 
+for(var j = 0; j < options.length; j++){
+    for(var i = 0; i < countryBorders['features'].length; i++){
+        if(options[j] == countryBorders['features'][i]['properties']['name']){
+            value.push(countryBorders['features'][i]['properties']['iso_a2'])
+        }
+    }
+}
+
+
 for(var i = 0; i < options.length; i++) {
  //var opt = options[i];
  var opt = options[i];
+ var val = value[i];
  var el = document.createElement("option");
  el.textContent = opt;
- el.value = opt;
+ el.value = val;
  select.appendChild(el); 
 }
 ////////////////////////////////////////////////////////////////////
@@ -32,12 +42,12 @@ var mymap = L.map('map');
 var marker = null;
     var myLinesLayer = null;
     var airports = null;
+var airportCluster = null;
 
 function everything(){
     
 
-        var jointCountry = document.getElementById("locality-dropdown").value.replace(/\s/g, "%20") //turns countries with two names into 1 name
-        var jointCountry2 = document.getElementById("locality-dropdown").value.replace(/\s/g, "+").toLowerCase() //turns countries with two names into 1 name
+       
         
             $.ajax({
                 
@@ -46,7 +56,7 @@ function everything(){
                 dataType: 'json',
                 data: {
                     
-                    country: jointCountry
+                    country: document.getElementById("locality-dropdown").value
                     
                 },
                 success: function(result) {
@@ -67,7 +77,7 @@ function everything(){
     
                         for(var j = 0; j < countryBorders['features'].length; j++){
                             //find geoJSON layer associated with selected country
-                            if(countryBorders['features'][j]['properties']['name'] == document.getElementById("locality-dropdown").value){
+                            if(countryBorders['features'][j]['properties']['iso_a2'] == document.getElementById("locality-dropdown").value){
                                geojson = {"type":"FeatureCollection","features": [{"type":"Feature","properties":countryBorders['features'][j]['properties'],"geometry":countryBorders['features'][j]['geometry']}]};
                                // console.log(countryBorders['features'][j]['properties']['name'])
                                 var iso_a2 = countryBorders['features'][j]['properties']['iso_a2'] //retrieve selected country iso_a2 value
@@ -103,12 +113,13 @@ function everything(){
                                 var confirmedCov = []
                                 var dateCov = []
                                 var deathsCov = []
+                                var recoveredCov = []
                                 for(var i = 0; i < result['data'].length; i++) {
                                     
                                     confirmedCov.push(result['data'][i]['Confirmed']);
                                     dateCov.push((result['data'][i]['Date']).substr(0,10));
                                     deathsCov.push(result['data'][i]['Deaths']);
-                                    
+                                    recoveredCov.push(result['data'][i]['Recovered'])
                                    // dateCov.push(result['data'][i]['Date']);
                                     }
                                 
@@ -140,6 +151,17 @@ function everything(){
                                     ],
                                     borderColor: [
                                     'rgba(0, 10, 130, .7)',
+                                    ],
+                                    borderWidth: 1
+                                    },
+                                    {
+                                    label: "Recovered",
+                                    data: recoveredCov,
+                                    backgroundColor: [
+                                    'rgba(132, 137, 0, .2)',
+                                    ],
+                                    borderColor: [
+                                    'rgba(130, 10, 0, .7)',
                                     ],
                                     borderWidth: 1
                                     }
@@ -176,6 +198,8 @@ function everything(){
                             
                             if (result.status.name == "ok") {
                                 //applies info to HTML
+                                var name = result['data']['name']
+                                $('#countryName').html(name);
                                 var capital = result['data']['capital']
                                 $('#txtcapital').html(capital);
                                 
@@ -188,7 +212,8 @@ function everything(){
                                 $('#Language').html(result['data']['languages'][0]["name"]);
                                 $('#continent').html(result['data']['subregion']);
                                 $('#currencySymbol').html(result['data']['currencies'][0]['symbol']);
-                                $('#naitiveName').html(result['data']['nativeName']);
+                                var naitiveName = result['data']['nativeName']
+                                $('#naitiveName').html(naitiveName);
                                 var bordersArray = result['data']['borders']
                                 var borders = ""
 
@@ -197,6 +222,7 @@ function everything(){
                                 }
                                 $('#timeZone').html(borders);
 
+                                var jointCapital = capital.replace(/\s/g, "%20").replace(/,/g, "%2C%") //turns countries with two names into 1 name
                                 //getting cooridinates of capital city and placing icon 
                                 $.ajax({ 
             
@@ -204,7 +230,7 @@ function everything(){
                                     type: 'POST',
                                     dataType: 'json',
                                     data: {
-                                        country: capital
+                                        country: jointCapital
                                     },
                                     success: function(result) {
                                                
@@ -228,7 +254,7 @@ function everything(){
                                     } 
                                     
                                         })
-                                        
+                                        console.log(code)
                                 $.ajax({ 
             
                                             url: "libs/php/getExchange.php",
@@ -253,6 +279,8 @@ function everything(){
                                             } 
                                             
                                         })
+                                        
+                                        var jointCountry2 = naitiveName.replace(/\s/g, "+").toLowerCase() //turns countries with two names into 1 name
                                         console.log(jointCountry2)
                                         $.ajax({ 
             
@@ -268,7 +296,7 @@ function everything(){
                                                 
                                                 var placesArray = []
                                                for(var a=0; a < result['data'].length; a++){
-                                                var nameAirport = result['data'][a]['formatted_address'];
+                                                var nameAirport = result['data'][a]['name'];
                                                 var Latairport = result['data'][a]['geometry']['location']['lat'];
                                                 var Lngairport = result['data'][a]['geometry']['location']['lng'];
                                                 var littleton_a = L.marker([Latairport, Lngairport], {icon: L.icon.glyph({ prefix: 'fas', glyph: 'plane'}) }).bindPopup(nameAirport);
@@ -279,7 +307,13 @@ function everything(){
                                                 mymap.removeLayer(airports);
                                             }
                                                 airports = L.layerGroup(placesArray)
-                                                //airports.addTo(mymap)
+                                                
+                                                if (airportCluster !== null) {
+                                                    mymap.removeLayer(airportCluster);
+                                                }
+                                                airportCluster = L.markerClusterGroup();
+                                                airportCluster.addLayer(airports);
+                                                
                                             }
                                             
                                             },
@@ -374,7 +408,7 @@ $(document).ready(function () {
                 if (result.status.name == "ok") {
             
                     console.log(result['data'][0]['components']['country']); 
-                    var countryName = result['data'][0]['components']['country']; 
+                    var countryName = result['data'][0]['components']['ISO_3166-1_alpha-2']; 
                     document.getElementById('locality-dropdown').value=countryName; //sets dropdown to current country
                     var home = new L.marker([position.coords.latitude, position.coords.longitude], {icon: L.icon.glyph({ prefix: 'fas', glyph: 'home' }) })
                     home.addTo(mymap)
@@ -429,7 +463,7 @@ $('select').on('change', function() {
         if (result.status.name == "ok") {
     
             console.log(result['data'][0]['components']['country']);
-            var countryName = result['data'][0]['components']['country'];
+            var countryName = result['data'][0]['components']['ISO_3166-1_alpha-2'];
             document.getElementById('locality-dropdown').value=countryName; //sets clicked country on drop down
             
             everything();
@@ -466,11 +500,11 @@ L.easyButton('<img src="libs/svg/disease-solid.svg" style="width:16px">', functi
 
 L.easyButton('<img src="libs/svg/plane-departure-solid.svg" style="width:16px">', function(btn, map) {
    
-    if(mymap.hasLayer(airports)) {
+    if(mymap.hasLayer(airportCluster)) {
         
-        map.removeLayer(airports);
+        mymap.removeLayer(airportCluster);
     } else {
-        map.addLayer(airports);        
+        mymap.addLayer(airportCluster);        
         
    }
 
