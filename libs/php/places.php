@@ -3,7 +3,9 @@
 	$executionStartTime = microtime(true) / 1000;
 
 
-    $url='https://maps.googleapis.com/maps/api/place/textsearch/json?query=airports+'. $_REQUEST['placesCode'] .'&key=AIzaSyABe1DvDh_qvUKw5Rf2eefC7OLL9Qe1QzI';
+   // $url='https://maps.googleapis.com/maps/api/place/textsearch/json?query=airports+'. $_REQUEST['placesCode'] .'&key=AIzaSyABe1DvDh_qvUKw5Rf2eefC7OLL9Qe1QzI';
+   $url= 'https://maps.googleapis.com/maps/api/place/textsearch/json?query=airports&location=' . $_REQUEST['airportLat'] . ',' . $_REQUEST['airportLng'] . '&key=AIzaSyABe1DvDh_qvUKw5Rf2eefC7OLL9Qe1QzI';
+ 
 
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);

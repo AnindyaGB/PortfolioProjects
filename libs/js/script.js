@@ -1,33 +1,3 @@
-
-/////////////////////////////////////////////////////////////////
-//adding country selections to navbar select from geoJSON files
-var select = document.getElementById("locality-dropdown"); 
-var options = []; 
-var value = [];
-for(var i = 0; i < countryBorders['features'].length; i++) {
- //var opt = options[i];
- options.push(countryBorders['features'][i]['properties']['name']);
- }
- options.sort();
-
-for(var j = 0; j < options.length; j++){
-    for(var i = 0; i < countryBorders['features'].length; i++){
-        if(options[j] == countryBorders['features'][i]['properties']['name']){
-            value.push(countryBorders['features'][i]['properties']['iso_a2'])
-        }
-    }
-}
-
-
-for(var i = 0; i < options.length; i++) {
- //var opt = options[i];
- var opt = options[i];
- var val = value[i];
- var el = document.createElement("option");
- el.textContent = opt;
- el.value = val;
- select.appendChild(el); 
-}
 ////////////////////////////////////////////////////////////////////
  
 var mymap = L.map('map');
@@ -46,10 +16,42 @@ var airportCluster = null;
 
 function everything(){
     
-
-       
+    $.ajax({ //retrieve country borders from geoJSON file
+    
+        url: "libs/php/countryBorders.php",
+        type: 'GET',
+        dataType: 'json',
         
-            $.ajax({
+        success: function(result) {
+                   
+        if (result.status.name == "ok") {
+            for(var i = 0; i < result['data'].length; i++){
+
+                if(result['data'][i]['properties']['iso_a2'] == document.getElementById("locality-dropdown").value){
+                    geojson = {"type":"FeatureCollection","features": [{"type":"Feature","properties":result['data'][i]['properties'],"geometry":result['data'][i]['geometry']}]};
+                   
+                }
+            }
+
+                if (myLinesLayer !== null) {
+                mymap.removeLayer(myLinesLayer);
+            }
+            
+           myLinesLayer = L.geoJSON(geojson,{})
+           myLinesLayer.addTo(mymap); 
+           mymap.fitBounds(myLinesLayer.getBounds())
+           
+        }
+        
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            // your error code
+            console.log(errorThrown)
+        } 
+        
+            })
+        
+             $.ajax({
                 
                 url: "libs/php/forwardGeocode.php",
                 type: 'POST',
@@ -69,29 +71,16 @@ function everything(){
                         //console.log(result['data'][0]['geometry']['lng']);
                         lat = result['data'][0]['geometry']['lat']
                         lng = result['data'][0]['geometry']['lng']
-                        $('#countryName').html(document.getElementById("locality-dropdown").value)
-                        $('#coordinates').html(lat);
+                        //$('#countryName').html(document.getElementById("locality-dropdown").value)
+                        //$('#coordinates').html(lat);
                         //mymap.setView([lat, lng], 6)
                         
                         //let geoJSON = {}
     
-                        for(var j = 0; j < countryBorders['features'].length; j++){
-                            //find geoJSON layer associated with selected country
-                            if(countryBorders['features'][j]['properties']['iso_a2'] == document.getElementById("locality-dropdown").value){
-                               geojson = {"type":"FeatureCollection","features": [{"type":"Feature","properties":countryBorders['features'][j]['properties'],"geometry":countryBorders['features'][j]['geometry']}]};
-                               // console.log(countryBorders['features'][j]['properties']['name'])
-                                var iso_a2 = countryBorders['features'][j]['properties']['iso_a2'] //retrieve selected country iso_a2 value
-    
-                            }
-                        }
+                       
+
                         
-                        //add geoJSON for selected country
-                        if (myLinesLayer !== null) {
-                            mymap.removeLayer(myLinesLayer);
-                        }
-                       myLinesLayer = L.geoJSON(geojson,{})
-                       myLinesLayer.addTo(mymap); 
-                       mymap.fitBounds(myLinesLayer.getBounds())
+                    
     
                        //calls covid API. 
                        $.ajax({
@@ -100,7 +89,7 @@ function everything(){
                         type: 'POST',
                         dataType: 'json',
                         data: {
-                            countryCode: iso_a2
+                            countryCode: document.getElementById("locality-dropdown").value
                         },
                         success: function(result) {
                             
@@ -119,7 +108,7 @@ function everything(){
                                     confirmedCov.push(result['data'][i]['Confirmed']);
                                     dateCov.push((result['data'][i]['Date']).substr(0,10));
                                     deathsCov.push(result['data'][i]['Deaths']);
-                                    recoveredCov.push(result['data'][i]['Recovered'])
+                                    recoveredCov.push(result['data'][i]['Recovered']);
                                    // dateCov.push(result['data'][i]['Date']);
                                     }
                                 
@@ -192,7 +181,7 @@ function everything(){
                         type: 'POST',
                         dataType: 'json',
                         data: {
-                            country: iso_a2
+                            country: document.getElementById("locality-dropdown").value
                         },
                         success: function(result) {
                             
@@ -288,7 +277,10 @@ function everything(){
                                             type: 'POST',
                                             dataType: 'json',
                                             data: {
-                                                placesCode: jointCountry2
+                                                airportLat:lat,
+                                                airportLng:lng
+                                            
+                                                
                                             },
                                             success: function(result) {
                                                        
@@ -389,6 +381,37 @@ function everything(){
 
 //on webpage Load function
 $(document).ready(function () {
+    
+    $.ajax({ //retrieve country name based on users click
+    
+        url: "libs/php/countryList.php",
+        type: 'GET',
+        dataType: 'json',
+        
+        success: function(result) {
+                   
+        if (result.status.name == "ok") {
+            var select = document.getElementById("locality-dropdown");
+           //console.log(result['data'])
+           for(var i = 0; i < result['data'].length; i++){
+            var opt = result['data'][i]['name'];
+            var val = result['data'][i]['code'];
+            var el = document.createElement("option");
+            el.textContent = opt;
+            el.value = val;
+            select.appendChild(el); 
+           }
+           
+        }
+        
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            // your error code
+            console.log(errorThrown)
+        } 
+        
+            }) 
+
     if ("geolocation" in navigator){ //check geolocation available 
         //try to get user current location using getCurrentPosition() method
         navigator.geolocation.getCurrentPosition(function(position){ 
@@ -413,6 +436,7 @@ $(document).ready(function () {
                     var home = new L.marker([position.coords.latitude, position.coords.longitude], {icon: L.icon.glyph({ prefix: 'fas', glyph: 'home' }) })
                     home.addTo(mymap)
                     home.bindPopup("Your Location")
+                    //oneCall()
                     everything();
                 }
                 
@@ -428,8 +452,150 @@ $(document).ready(function () {
     }else{
         console.log("Browser doesn't support geolocation!");
     }
+
     
+   
 });
+
+////////////////////////////////////////////////////////////////////
+
+function oneCall() {
+
+    $.ajax({ //retrieve country borders from geoJSON file
+    
+        url: "libs/php/countryBorders.php",
+        type: 'GET',
+        dataType: 'json',
+        
+        success: function(result) {
+                   
+        if (result.status.name == "ok") {
+            for(var i = 0; i < result['data'].length; i++){
+
+                if(result['data'][i]['properties']['iso_a2'] == document.getElementById("locality-dropdown").value){
+                    geojson = {"type":"FeatureCollection","features": [{"type":"Feature","properties":result['data'][i]['properties'],"geometry":result['data'][i]['geometry']}]};
+                   
+                }
+            }
+
+                if (myLinesLayer !== null) {
+                mymap.removeLayer(myLinesLayer);
+            }
+            
+           myLinesLayer = L.geoJSON(geojson,{})
+           myLinesLayer.addTo(mymap); 
+           mymap.fitBounds(myLinesLayer.getBounds())
+           
+        }
+        
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            // your error code
+            console.log(errorThrown)
+        } 
+        
+            })
+
+    $.ajax({ //retrieve country name based on users click
+    
+        url: "libs/php/everything.php",
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            country: document.getElementById("locality-dropdown").value
+        },
+        success: function(result) {
+                   
+        if (result.status.name == "ok") {
+            $('#countryName').html(result['data']['countryName']);
+            
+            $('#txtcapital').html(result['data']['capitalName']);
+                                
+            $('#txtpopulation').html(result['data']['population']);
+            $('#txtcurrency').html(result['data']['currencyName']);
+            $('#txtcurrencyCode').html(result['data']['currencyCode']);
+            document.getElementById("flag").src = result['data']['flag'];
+            $('#Language').html(result['data']['language']);
+            $('#continent').html(result['data']['continent']);
+            $('#currencySymbol').html(result['data']['currencySymbol']);
+            $('#naitiveName').html(result['data']['naitiveName']);
+
+            $('#txtdescription').html(result['data']['weather']);
+            $('#txttemperature').html(result['data']['temp']);
+            $('#txtFeelsLike').html(result['data']['feels_like']); 
+            $('#txtHumidity').html(result['data']['humidity']);
+            $('#txtWind').html(result['data']['wind_speed']);
+
+            $('#exchangeRateUSD').html(result['data']['exchangeUSD']);
+            $('#exchangeRateEUR').html(result['data']['exchangeEUR']);
+            $('#exchangeRateGBP').html(result['data']['exchangeGBP']);
+
+            $('#covidConfirmed').html(result['data']['covidConfirmed'][[result['data']['covidConfirmed'].length - 1]]);
+            $('#covidDeaths').html(result['data']['covidDeaths'][[result['data']['covidDeaths'].length - 1]]);
+            $('#covidRecovered').html(result['data']['covidRecovered'][result['data']['covidRecovered'].length - 1]);
+
+            if (marker !== null) {
+                mymap.removeLayer(marker);
+            }
+
+            marker = L.marker([result['data']['CapitalLat'], result['data']['CapitalLng']], {icon: L.icon.glyph({ prefix: 'fas', glyph: 'city' })}).addTo(mymap);
+            marker.bindPopup("Capital City: " + result['data']['capitalName'])
+
+            var ctxL = document.getElementById("lineChart").getContext('2d');
+            var myLineChart = new Chart(ctxL, {
+                                    type: 'line',
+                                    data: {
+                                    labels: result['data']['covidDate'],
+                                    datasets: [{
+                                    label: "Confirmed Cases",
+                                    data: result['data']['covidConfirmed'],
+                                    backgroundColor: [
+                                    'rgba(105, 0, 132, .2)',
+                                    ],
+                                    borderColor: [
+                                    'rgba(200, 99, 132, .7)',
+                                    ],
+                                    borderWidth: 1
+                                    },
+                                    {
+                                    label: "Deaths",
+                                    data: result['data']['covidDeaths'],
+                                    backgroundColor: [
+                                    'rgba(0, 137, 132, .2)',
+                                    ],
+                                    borderColor: [
+                                    'rgba(0, 10, 130, .7)',
+                                    ],
+                                    borderWidth: 1
+                                    },
+                                    {
+                                    label: "Recovered",
+                                    data: result['data']['covidRecovered'],
+                                    backgroundColor: [
+                                    'rgba(132, 137, 0, .2)',
+                                    ],
+                                    borderColor: [
+                                    'rgba(130, 10, 0, .7)',
+                                    ],
+                                    borderWidth: 1
+                                    }
+                                    ]
+                                    },
+                                    options: {
+                                    responsive: true
+                                    }
+            });
+        }
+        
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            // your error code
+            console.log(errorThrown)
+        } 
+        
+            }) 
+}
+
 
 ////////////////////////////////////////////////////////////////////
 
@@ -517,3 +683,11 @@ L.easyButton( '<img src="libs/svg/info-circle-solid.svg" style="width:16px">', f
 }).addTo(mymap);
 
 ////////////////////////////////////////////////////////////////////
+//add margins to select box
+//Icon for weather formatting
+//set currency to one line
+//look at bootstrap tables
+//street map and satalite map
+//feature groups layer control for airports/landmarks etc
+//add news for country
+
