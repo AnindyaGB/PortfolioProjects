@@ -1,0 +1,142 @@
+@media only screen and (min-width: 383px){
+
+body{
+    margin-top:70px;
+    background-color: #edf0f0;    
+}
+}
+
+@media only screen and (max-width: 383px){
+    body{
+    margin-top:120px;
+    background-color: #edf0f0;    
+
+    }
+}
+.btn-primary, 
+.btn-primary:hover, 
+.btn-primary:focus, 
+.btn-primary:active, 
+.btn-primary.active, 
+.btn-primary.focus, 
+.btn-primary:active, 
+.btn-primary:focus, 
+.btn-primary:hover, 
+.open>.dropdown-toggle.btn-primary {
+    background-color: #3bc0c3;
+    border: 1px solid #3bc0c3;
+    margin: 5px;
+}
+.p-t-10 {
+    padding-top: 10px !important;
+}
+.media-main a.pull-left {
+    width: 100px;
+}
+.thumb-lg {
+    height: 84px;
+    width: 84px;
+}
+.media-main .info {
+    overflow: hidden;
+    color: #000;
+}
+.media-main .info h4 {
+    padding-top: 10px;
+    margin-bottom: 5px;
+}
+.social-links li a  {
+    background: #EFF0F4;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    display: inline-block;
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    color: #7A7676;
+}
+
+ul {
+    list-style: none;
+}
+
+.modal {
+    position: fixed;
+}
+
+::-webkit-input-placeholder {
+    font-style: italic;
+ }
+ :-moz-placeholder {
+    font-style: italic;  
+ }
+ ::-moz-placeholder {
+    font-style: italic;  
+ }
+ :-ms-input-placeholder {  
+    font-style: italic; 
+ }
+
+ @media only screen and (max-width: 383px){
+ #scrollToTopBtn  {
+   
+    background-color: #3bc0c3;
+    border: none;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 48px;
+    width: 48px;
+    bottom: 15px;
+    right: 100px;
+  }
+  
+}
+
+.form-inline{
+    width: 100%;
+}
+.nav-btn{
+    width: 72px;
+}
+.btn-new{
+    width: 111px;
+}
+.create-list{
+    display:block;
+    margin: 0 auto;
+    text-align: center;
+    padding: 0%;
+}
+
+#logo {
+    height: 38px;
+}
+
+#back2Top {
+    width: 40px;
+    line-height: 40px;
+    overflow: hidden;
+    z-index: 999;
+    display: none;
+    cursor: pointer;
+    -moz-transform: rotate(270deg);
+    -webkit-transform: rotate(270deg);
+    -o-transform: rotate(270deg);
+    -ms-transform: rotate(270deg);
+    transform: rotate(270deg);
+    position: fixed;
+    bottom: 50px;
+    right: 0;
+    background-color: #DDD;
+    color: #555;
+    text-align: center;
+    font-size: 30px;
+    text-decoration: none;
+}
+#back2Top:hover {
+    background-color: #DDF;
+    color: #000;
+}
